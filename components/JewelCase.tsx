@@ -24,7 +24,7 @@ interface Props {
   playlistId?: string;
   particles?: "hearts" | "stars" | "notes" | "flowers" | "none";
   stickers?: string[];
-  i18n?: { clickToOpen: string; shareToStory: string; noPreview: string; madeWith: string; createOwn: string };
+  i18n?: { clickToOpen: string; shareToStory: string; noPreview: string; createOwn: string };
   lang?: "en" | "pt";
 }
 
@@ -139,7 +139,7 @@ export default function JewelCase({
     return (r * 299 + g * 587 + b * 114) / 1000 < 128;
   })();
 
-  const t = i18n ?? { clickToOpen: "Click to open", shareToStory: "Share to Story", noPreview: "no preview available", madeWith: "made with ♥ by", createOwn: "create your own playlist" };
+  const t = i18n ?? { clickToOpen: "Click to open", shareToStory: "Share to Story", noPreview: "no preview available", createOwn: "create your own playlist" };
 
   const handleOpen = () => {
     if (phase !== "closed") return;
@@ -876,12 +876,11 @@ export default function JewelCase({
             display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
             padding: "0 20px", boxSizing: "border-box",
           }}>
-            {/* Line 1: made with + caahmills */}
+            {/* Line 1: project source */}
             <span style={{ whiteSpace: "nowrap" }}>
-              {t.madeWith}{" "}
-              <a href="https://www.instagram.com/caahmills/" target="_blank" rel="noopener noreferrer"
+              <a href="https://github.com/camomillar/songs4u" target="_blank" rel="noopener noreferrer"
                 style={{ color: isDark ? "rgba(255,255,255,0.9)" : "#444", textDecoration: "none", borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.4)" : "#aaa"}` }}>
-                caahmills
+                View on GitHub
               </a>
             </span>
             {/* Line 2: create playlist + Powered by Deezer */}

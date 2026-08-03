@@ -25,7 +25,6 @@ const T = {
     addName: "Add a name to continue", addSong: "Add at least one song to continue",
     alertName: "Please enter who this is for!", alertSong: "Add at least one song!",
     alertError: "Could not generate link. Please try again.",
-    madeWith: "Made with ♥ by",
   },
   pt: {
     subtitle: "Escreva uma mensagem, escolha suas músicas\ne compartilhe o amor!",
@@ -43,7 +42,6 @@ const T = {
     addName: "Adicione um nome para continuar", addSong: "Adicione pelo menos uma música para continuar",
     alertName: "Por favor, insira para quem é a playlist!", alertSong: "Adicione pelo menos uma música!",
     alertError: "Não foi possível gerar o link. Tente novamente.",
-    madeWith: "Feito com ♥ por",
   },
 };
 
@@ -67,7 +65,7 @@ const label: React.CSSProperties = {
 };
 
 const input: React.CSSProperties = {
-  fontFamily: "'Outfit', system-ui",
+  fontFamily: F,
   fontSize: 14,
   color: "#111",
   background: "#f7f7f8",
@@ -113,8 +111,8 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<{ id: string; title: string; artist: string; albumArt: string; previewUrl?: string | null }[]>([]);
   const [searching, setSearching] = useState(false);
 
-  const [lang, setLang] = useState<"en" | "pt">("pt");
-  const [langOpen, setLangOpen] = useState(false);
+  // The site is English-only; `lang` is kept as a constant for the analytics payloads.
+  const lang = "en";
   const t = T[lang];
   const [bgColor, setBgColor] = useState("#C8A9FA");
   const [particles, setParticles] = useState<"hearts" | "stars" | "notes" | "flowers" | "none">("hearts");
@@ -187,51 +185,6 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f5f7" }}>
-      {/* Language dropdown */}
-      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 50 }}>
-        <button
-          onClick={() => setLangOpen(o => !o)}
-          style={{
-            fontFamily: "'Raleway', sans-serif", fontSize: 13, fontWeight: 600,
-            background: "white", border: "1px solid #e0e0e0", borderRadius: 99,
-            padding: "7px 14px", cursor: "pointer", color: "#444",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-            display: "flex", alignItems: "center", gap: 6,
-          }}
-        >
-          {lang === "en" ? "🇺🇸" : "🇧🇷"} {lang === "en" ? "EN" : "PT"} <span style={{ fontSize: 10, color: "#aaa" }}>▾</span>
-        </button>
-        {langOpen && (
-          <div style={{
-            position: "absolute", top: "calc(100% + 6px)", right: 0,
-            background: "white", border: "1px solid #e0e0e0", borderRadius: 12,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
-            overflow: "hidden", minWidth: 130,
-          }}>
-            {([
-              { code: "pt", flag: "🇧🇷", label: "Português" },
-              { code: "en", flag: "🇺🇸", label: "English" },
-            ] as const).map(({ code, flag, label }) => (
-              <button
-                key={code}
-                onClick={() => { setLang(code); setLangOpen(false); }}
-                style={{
-                  width: "100%", display: "flex", alignItems: "center", gap: 10,
-                  padding: "10px 14px", border: "none", cursor: "pointer",
-                  fontFamily: "'Raleway', sans-serif", fontSize: 13, fontWeight: 500,
-                  background: lang === code ? "#f5f5f7" : "white",
-                  color: "#333",
-                  borderBottom: code === "pt" ? "1px solid #f0f0f0" : "none",
-                }}
-              >
-                <span style={{ fontSize: 18 }}>{flag}</span> {label}
-                {lang === code && <span style={{ marginLeft: "auto", color: "#111", fontSize: 11 }}>✓</span>}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Content */}
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 80px", position: "relative", zIndex: 1 }}>
 
@@ -487,10 +440,9 @@ export default function Home() {
         textAlign: "center", padding: "16px 0 32px",
         whiteSpace: "nowrap",
       }}>
-        {t.madeWith}{" "}
-        <a href="https://www.instagram.com/caahmills/" target="_blank" rel="noopener noreferrer"
+        <a href="https://github.com/camomillar/songs4u" target="_blank" rel="noopener noreferrer"
           style={{ color: "#444", textDecoration: "none", borderBottom: "1px solid #aaa" }}>
-          caahmills
+          View on GitHub
         </a>
         <span style={{ margin: "0 10px", opacity: 0.4 }}>·</span>
         <a href="https://www.deezer.com" target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>

@@ -221,7 +221,7 @@ async function generateStory(canvas: HTMLCanvasElement, props: Omit<Props, "onCl
     await document.fonts.load(`16px OrdinaryLetter`);
   } catch { /* fallback */ }
   try {
-    const font = new FontFace("Outfit", "url(/fonts/Outfit/Outfit-VariableFont_wght.ttf)", { weight: "100 900" });
+    const font = new FontFace("Outfit", "url(/fonts/Outfit-VariableFont_wght.ttf)", { weight: "100 900" });
     await font.load();
     document.fonts.add(font);
     await document.fonts.load(`16px Outfit`);
