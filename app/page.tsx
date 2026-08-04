@@ -4,6 +4,7 @@ import Image from "next/image";
 import QRShare from "@/components/QRShare";
 import { encodePlaylist, type Song } from "@/lib/encode";
 import { compressImage } from "@/lib/compress";
+import { readConsent } from "@/lib/consent";
 import posthog from "posthog-js";
 
 const F = "system-ui, -apple-system, sans-serif";
@@ -169,9 +170,17 @@ export default function Home() {
     if (!to.trim()) { alert(t.alertName); return; }
     if (songs.length === 0) { alert(t.alertSong); return; }
     try {
+      // Consent is the gate; the PostHog id is only a nicety, so that a failure to
+      // read it can never turn a decline into an accept (or vice versa).
+      const consented = readConsent() === "accepted";
+      const analyticsId = consented ? posthog.get_distinct_id() : null;
       const res = await fetch("/api/playlist", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(consented ? { "x-analytics-consent": "1" } : {}),
+          ...(analyticsId ? { "x-analytics-id": analyticsId } : {}),
+        },
         body: JSON.stringify({ to: to.trim(), from: from.trim(), title: title.trim(), message: message.trim(), songs, bgColor, particles, stickers, ...(coverImage ? { coverImage } : {}) }),
       });
       const { id } = await res.json();
@@ -434,21 +443,38 @@ export default function Home() {
 
       {shareUrl && <QRShare url={shareUrl} onClose={() => setShareUrl(null)} />}
 
-      {/* Footer */}
-      <p style={{
+      {/* Footer — one line where it fits, stacked without separators where it doesn't */}
+      <style>{`
+        .s4u-footer { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; }
+        @media (max-width: 600px) {
+          .s4u-footer { flex-direction: column; gap: 4px; }
+          .s4u-footer .s4u-sep { display: none; }
+        }
+      `}</style>
+      <div className="s4u-footer" style={{
         fontFamily: F, fontSize: 11, color: "#555",
-        textAlign: "center", padding: "16px 0 32px",
-        whiteSpace: "nowrap",
+        padding: "16px 20px 32px", boxSizing: "border-box",
       }}>
-        <a href="https://github.com/camomillar/songs4u" target="_blank" rel="noopener noreferrer"
-          style={{ color: "#444", textDecoration: "none", borderBottom: "1px solid #aaa" }}>
-          View on GitHub
-        </a>
-        <span style={{ margin: "0 10px", opacity: 0.4 }}>·</span>
-        <a href="https://www.deezer.com" target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>
-          Powered by <span style={{ textDecoration: "underline" }}>Deezer</span>
-        </a>
-      </p>
+        {(() => {
+          const linkStyle = { color: "#555", textDecoration: "none", whiteSpace: "nowrap" as const };
+          const sep = <span className="s4u-sep" style={{ margin: "0 10px", opacity: 0.4 }}>·</span>;
+          return (
+            <>
+              <a href="https://github.com/camomillar/songs4u" target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                View on <span style={{ textDecoration: "underline" }}>GitHub</span>
+              </a>
+              {sep}
+              <a href="/privacy" style={linkStyle}>
+                <span style={{ textDecoration: "underline" }}>Privacy</span>{" "}&amp; cookies
+              </a>
+              {sep}
+              <a href="https://www.deezer.com" target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                Powered by <span style={{ textDecoration: "underline" }}>Deezer</span>
+              </a>
+            </>
+          );
+        })()}
+      </div>
     </div>
   );
 }

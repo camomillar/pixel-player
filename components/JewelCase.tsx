@@ -870,27 +870,42 @@ export default function JewelCase({
             />
           )}
 
-          <div style={{
+          {/* One line on desktop; stacks without separators where it can't fit */}
+          <style>{`
+            .jc-footer { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; }
+            @media (max-width: 600px) {
+              .jc-footer { flex-direction: column; gap: 4px; }
+              .jc-footer .jc-sep { display: none; }
+            }
+          `}</style>
+          <div className="jc-footer" style={{
             fontFamily: "'Raleway', system-ui", fontSize: 11, color: isDark ? "rgba(255,255,255,0.75)" : "#555",
             position: "fixed", bottom: 16, left: 0, right: 0, zIndex: 10,
-            display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
             padding: "0 20px", boxSizing: "border-box",
           }}>
-            {/* Line 1: project source */}
-            <span style={{ whiteSpace: "nowrap" }}>
-              <a href="https://github.com/camomillar/songs4u" target="_blank" rel="noopener noreferrer"
-                style={{ color: isDark ? "rgba(255,255,255,0.9)" : "#444", textDecoration: "none", borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.4)" : "#aaa"}` }}>
-                View on GitHub
-              </a>
-            </span>
-            {/* Line 2: create playlist + Powered by Deezer */}
-            <span style={{ whiteSpace: "nowrap" }}>
-              <a href="/" style={{ color: isDark ? "rgba(255,255,255,0.75)" : "#555", textDecoration: "none" }}>
-                {lang === "pt" ? <>Crie sua playlist <span style={{ textDecoration: "underline" }}>aqui</span></> : <>Create your playlist <span style={{ textDecoration: "underline" }}>here</span></>}
-              </a>
-              <span style={{ margin: "0 8px", opacity: 0.4 }}>·</span>
-              <a href="https://www.deezer.com" target="_blank" rel="noopener noreferrer" style={{ color: isDark ? "rgba(255,255,255,0.75)" : "#555", textDecoration: "none" }}>Powered by <span style={{ textDecoration: "underline" }}>Deezer</span></a>
-            </span>
+            {(() => {
+              const linkStyle = { color: isDark ? "rgba(255,255,255,0.75)" : "#555", textDecoration: "none", whiteSpace: "nowrap" as const };
+              const sep = <span className="jc-sep" style={{ margin: "0 8px", opacity: 0.4 }}>·</span>;
+              return (
+                <>
+                  <a href="https://github.com/camomillar/songs4u" target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                    View on <span style={{ textDecoration: "underline" }}>GitHub</span>
+                  </a>
+                  {sep}
+                  <a href="/" style={linkStyle}>
+                    {lang === "pt" ? <>Crie sua playlist <span style={{ textDecoration: "underline" }}>aqui</span></> : <>Create your playlist <span style={{ textDecoration: "underline" }}>here</span></>}
+                  </a>
+                  {sep}
+                  <a href="/privacy" style={linkStyle}>
+                    <span style={{ textDecoration: "underline" }}>Privacy</span>{" "}&amp; cookies
+                  </a>
+                  {sep}
+                  <a href="https://www.deezer.com" target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                    Powered by <span style={{ textDecoration: "underline" }}>Deezer</span>
+                  </a>
+                </>
+              );
+            })()}
           </div>
         </>
       )}
