@@ -22,7 +22,13 @@ export async function POST(req: NextRequest) {
     if (req.headers.get("x-analytics-consent") === "1") {
       try {
         const posthog = getPostHogClient();
-        posthog.capture({
+        // captureImmediate (not capture) — this is a serverless function, not a
+        // long-lived server, so Vercel can freeze/terminate it the instant the
+        // response below is sent. capture() queues the event via an internal
+        // async prepare step and returns immediately, so even an awaited
+        // flush() right after it can race that prep and flush an empty queue.
+        // captureImmediate sends the event and awaits the real network request.
+        await posthog.captureImmediate({
           distinctId: req.headers.get("x-analytics-id") || id,
           event: "playlist_saved",
           properties: {
